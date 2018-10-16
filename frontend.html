@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <p id="conn">not connected</p>
+  <input id="field">
+  <ul id="list">
+  </ul>
+  <script>
+    let websocket = new WebSocket('ws://localhost:40510');
+    websocket.onopen = () => document.getElementById('conn').innerHTML = 'Connected! :D';
+    websocket.onclose = () => document.getElementById('conn').innerHTML = 'not connected';
+    websocket.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      document.getElementById('list').insertAdjacentHTML('beforeend', `<li><strong>${data.who}:</strong> ${data.message}</li>`);
+    };
+    document.getElementById('field').addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        websocket.send(JSON.stringify({who: 'You', message: e.target.value}));
+        e.target.value = '';
+      }
+    });
+  </script>
+</body>
+</html>
